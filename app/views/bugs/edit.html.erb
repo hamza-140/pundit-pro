@@ -1,0 +1,8 @@
+<% if policy(Bug).edit? %>
+<div class="d-flex justify-content-center align-items-center">
+    <h1>Edit Bug</h1>
+</div>
+<%= render 'form', update_check: true %>
+<% else %>
+  <p>You are not authorized to edit this bug.</p>
+<% end %>

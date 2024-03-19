@@ -1,0 +1,37 @@
+<%= form_with model: product,class: "product-form", local: true do |f| %>
+  <div class="mb-3">
+<%=  f.label :name ,  class: "form-label"%>
+<%= f.text_field :name, class:"form-control",placeholder:'Product Name',required: true %>
+<% product.errors.full_messages_for(:name).each do |message| %>
+      <div style="color:red"><%= message %></div>
+    <% end %>
+</div>
+  <div class="mb-3">
+<%= f.label :description,class: "form-label"%>
+<%= f.text_field :description, class:"form-control",placeholder:'Product Description',required: true %>
+<% product.errors.full_messages_for(:description).each do |message| %>
+      <div style="color:red"><%= message %></div>
+    <% end %>
+</div>
+  <div class="mb-3">
+<%= f.label :quantity,class: "form-label"%>
+<%= f.number_field  :quantity, class:"form-control",placeholder:'Enter Quantity',onkeypress:"return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))",required: true %>
+<% product.errors.full_messages_for(:quantity).each do |message| %>
+      <div style="color:red"><%= message %></div>
+    <% end %>
+</div>
+<div class="mb-3">
+  <%= f.label :status,class:"form-label" %><br>
+  <%= f.select :status, Visible::VALID_STATUSES, selected: product.status || 'public' , class:"form-select"%>
+</div>
+
+ <div class="mb-3">
+ <%= f.submit buttonName,class:"btn btn-primary"%>
+ <%= link_to "Return", products_path , class:"btn btn-outline-primary mx-2"%>
+<%
+=begin%>
+ <a style="text-decoration:none" class="btn btn-outline-primary mx-2" href="<%= products_path %>">Return</a> 
+<%
+=end%>
+</div>
+<% end %>

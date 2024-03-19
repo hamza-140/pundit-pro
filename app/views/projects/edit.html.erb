@@ -1,0 +1,41 @@
+<div class="wrapper">
+<h1 class="text-center name">Edit Project</h1>
+
+<% if policy(Project).edit? %>
+  <%= form_for(@project) do |f| %>
+    <% if @project.errors.any? %>
+    <% flash[:alert] = "You are not authorized!" %>
+    <% end %>
+
+    <div class="form-field d-flex align-items-center">
+      <%= f.label :name %><br>
+      <%= f.text_field :name %>
+    </div>
+
+    <div class="form-field d-flex align-items-center" style="height: 100px;">
+      <%= f.label :description %><br>
+      <%= f.text_field :description %>
+    </div>
+    <div class="field">
+        <%= f.label :manager %><br>
+        <%= f.collection_check_boxes :user_ids, User.where(role: "manager"), :id, :name %>
+      </div>
+      <div class="field">
+        <%= f.label :developers %><br>
+        <%= f.collection_check_boxes :user_ids, User.where(role: "developer"), :id, :name %>
+      </div>
+
+      <div class="field">
+        <%= f.label :quality_assurance %><br>
+        <%= f.collection_check_boxes :user_ids, User.where(role: "quality_assurance"), :id, :name %>
+      </div>
+
+    <div class="actions">
+      <%= f.submit "Update",class:"btn mt-3"%>
+    </div>
+    <%= link_to "Return", projects_path , class:"btn mt-3"%>
+  <% end %>
+<% else %>
+  <p>You are not authorized to edit this project.</p>
+<% end %>
+</div>

@@ -1,0 +1,21 @@
+<div class="d-flex justify-content-center align-items-center">
+    <h1>Bug Details</h1>
+</div>
+<form>
+  <div class="mb-3">
+    <label for="name" class="form-label">Bug Title:</label>
+    <input readonly class="form-control" id="name" aria-describedby="name" value='<%= @bug.title %>' >
+  </div>
+  <div class="mb-3">
+    <label for="description" class="form-label">Bug Description:</label>
+    <input readonly class="form-control" id="description" aria-describedby="description" value='<%= @bug.description %>'>
+  </div>
+  <div class="mb-3">
+    <label for="bug_developer" class="form-label">Bug Developer:</label>
+    <input readonly class="form-control" id="bug_developer" aria-describedby="bug_developer" value="<%= @bug.user ? @bug.user.email : 'Unassigned' %>">
+  </div>
+</form>
+<% if policy(Bug).update? %>
+<%= link_to 'Edit', edit_project_bug_path(@project, @bug),class:"btn btn-outline-success mb-3" %> 
+<% end %>
+<%= link_to 'Return', project_path(@project),class:"btn btn-outline-primary mb-3" %>
