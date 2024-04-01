@@ -1,43 +1,71 @@
 <div class="wrapper">
-  
-<%= form_with(model: [@project, @bug], local: true) do |form| %>
-<% if
-@bug.errors.any? %>
-<div id="error_explanation">
-  <h2>
-    <%= pluralize(@bug.errors.count, "error") %> prohibited this bug
-    from being created:
-  </h2>
+  <%= form_with(model: [@project, @bug], local: true) do |form| %>
+    <% if @bug.errors.any? %>
+      <div id="error_explanation">
+        <h2>
+          <%= pluralize(@bug.errors.count, "error") %> prohibited this bug
+          from being <%= update_check ? "updated" : "created" %>:
+        </h2>
 
-  <ul>
-    <% @bug.errors.full_messages.each do |message| %>
-    <li><%= message %></li>
+        <ul>
+          <% @bug.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
-  </ul>
-</div>
-<% end %>
-<div class="text-center mt-4 name">
-  <%= update_check ? "Update" : "New" %> Bug for <%= @project.name %>  </div>
-  <div class="mb-3">
-    <%= form.label :title,class: "form-label" %>
-    <%= form.text_field :title ,class:"form-control",placeholder:'Bug Title',required: true%>
-  </div>
 
-  <div class="mb-3">
-    <%= form.label :description,class: "form-label" %>
-    <%= form.text_area :description,class:"form-control",placeholder:'Project Description',required: true %>
-  </div>
+    <div class="text-center mb-2 name">
+      <%= update_check ? "Update" : "New" %> Bug for <%= @project.name %>  
+    </div>
 
-  <div class="form-field d-flex align-items-center role-field mb-3">
-    <i class="bi bi-person-plus"></i>
-    <%= form.collection_select :user_id,User.where(role: "developer"), :id, :name, prompt: "Select developer" ,class:"form-select",required: true%>
-  </div>
-  
+    <div class="mb-3">
+      <%= form.label :title, class: "form-label" %>
+      <%= form.text_field :title, class: "form-control", placeholder: 'Bug Title', autofocus: true %>
+    </div>
 
-  <div class="actions">
-    <%= form.submit(update_check ? "Update" : "Create", class: "btn btn-primary mt-3") %>
-    <%= link_to 'Return', project_path(@project) ,class:"btn mt-3"%>
+    <div class="mb-3">
+      <%= form.label :description, class: "form-label" %>
+      <%= form.text_area :description, class: "form-control", placeholder: 'Project Description' %>
+    </div>
 
-  </div>
-<% end %>
+    <div class="mb-3">
+      <%= form.label :deadline, class: "form-label" %>
+      <%= form.date_field :deadline, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :screenshot, class: "form-label" %>
+      <%= form.file_field :screenshot, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :bug_type, class: "form-label" %>
+      <%= form.select :bug_type, ['feature', 'bug'], prompt: "Select Type", class: "form-select" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :status, class: "form-label" %>
+      <% if @bug && @bug.bug_type == 'feature' %>
+        <% status_options = ['new', 'started', 'completed'] %>
+      <% else %>
+        <% status_options = ['new', 'started', 'resolved'] %>
+      <% end %>
+      <%= form.select :status, status_options, prompt: "Select Status", class: "form-select" %>
+    </div>
+    
+    <div class="mb-3">
+      <%= form.label "Assign to ", class: "form-label" %>
+    <div class="form-field d-flex align-items-center role-field mb-3">
+      <i class="bi bi-person-plus"></i>
+      <%= form.collection_select :user_id, User.where(role: "developer").to_a.unshift(User.new(name: "None")), :id, :name, prompt: "Select developer", class: "form-select" %>
+    </div>
+    </div>
+    
+
+    <div class="actions">
+      <%= form.submit(update_check ? "Update" : "Create", class: "btn btn-primary mt-3") %>
+      <%= link_to 'Return', project_path(@project), class: "btn mt-3" %>
+    </div>
+  <% end %>
 </div>

@@ -3,9 +3,7 @@
 
 <% if policy(Project).edit? %>
   <%= form_for(@project) do |f| %>
-    <% if @project.errors.any? %>
-    <% flash[:alert] = "You are not authorized!" %>
-    <% end %>
+  <%= render "users/shared/error_messages", resource: @project %>
 
     <div class="form-field d-flex align-items-center">
       <%= f.label :name %><br>
@@ -16,10 +14,7 @@
       <%= f.label :description %><br>
       <%= f.text_field :description %>
     </div>
-    <div class="field">
-        <%= f.label :manager %><br>
-        <%= f.collection_check_boxes :user_ids, User.where(role: "manager"), :id, :name %>
-      </div>
+    
       <div class="field">
         <%= f.label :developers %><br>
         <%= f.collection_check_boxes :user_ids, User.where(role: "developer"), :id, :name %>

@@ -16,43 +16,67 @@
     </div>
 
     <h4>List of Bugs:</h4>
-<div id="searchResults">
-  <table class="table">
-    <% if @bugs.empty? %>
-    <div style="display: flex; justify-content: center; align-items: center; height: 10vh;">
-    <p>No Bugs! Add New Bug.</p>
-  </div>    
-  <% else %>
-      <% @bugs.each do |bug| %>
-        <tbody class="projectRow">
-          <tr>
-            <td>
-              <div style="display: flex; align-items: center;">
-                <div style="flex: 1;"><%= bug.title %></div>
-                <div class="d-flex justify-content-center align-items-center">
-                  <%= link_to "", project_bug_path(@project,bug), class: "bi bi-eye-fill px-2", style: "color:green" %>
-                  <% if policy(Bug).edit?%>
-                    <%= link_to "", edit_project_bug_path(@project,bug), class: "bi bi-pencil-square px-2", style: "color:orange" %>
-                    <p class="pt-3 px-2"><%= link_to "Delete", [bug.project, bug], data: {
-                  turbo_method: :delete,
-                  turbo_confirm: "Are you sure?"
-                } %>
-                </p>                  
-                <% end %>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      <% end %>
-    <% end %>
-  </table>
-</div>
+
+    <!-- Search Bar -->
+    <div class="mb-3">
+      <input id="searchInput" type="text" class="form-control" placeholder="Search...">
+    </div>
+    
+    <div id="searchResults">
+      <table class="table">
+        <% if @bugs.empty? %>
+          <div style="display: flex; justify-content: center; align-items: center; height: 10vh;">
+            <p>No Bugs! Add New Bug.</p>
+          </div>    
+        <% else %>
+          <% @bugs.each do |bug| %>
+            <tbody class="projectRow">
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center;">
+                    <div style="flex: 1;"><%= bug.title %></div>
+                    <div class="d-flex justify-content-center align-items-center">
+                      <%= link_to "", project_bug_path(@project, bug), class: "bi bi-eye-fill px-2", style: "color:green" %>
+                      <% if policy(Bug).update? %>
+                        <%= link_to "", edit_project_bug_path(@project, bug), class: "bi bi-pencil-square px-2", style: "color:orange" %>
+                      <% end %>
+                      <% if policy(Bug).destroy? %>
+                        <p class="pt-3 px-2">
+                          <%= link_to "Delete", [bug.project, bug], data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
+                        </p>
+                      <% end %>
+                      <button type="button" class="btn btn-success mx-3"><%= bug.status %></button>
+                      <button type="button" class="btn btn-info mx-3"><%= bug.bug_type %></button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          <% end %>
+        <% end %>
+      </table>
+    </div>
+    
     <% if policy(Bug).create? %>
-        <a style="text-decoration:none" class="btn btn-outline-warning mx-2 text-nowrap" href="<%= projects_bugs_path %>">New Bug</a>
-      <% end %>
+      <a style="text-decoration:none" class="btn btn-outline-warning mx-2 text-nowrap" href="<%= new_project_bug_path(@project) %>">New Bug</a>
+    <% end %>
     <a style="text-decoration:none" class="btn btn-outline-primary mx-2 text-nowrap" href="<%= projects_path %>">Return</a>
-
-
-
-  
+    
+    <!-- Separate script tag for JavaScript code -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#searchInput').on('keyup', function() {
+          var searchText = $(this).val().toLowerCase();
+          $('.projectRow').each(function() {
+            var title = $(this).find('td div:first-child').text().toLowerCase();
+            if (title.includes(searchText)) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        });
+      });
+    </script>
+    

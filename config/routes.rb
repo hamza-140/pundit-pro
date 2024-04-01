@@ -1,4 +1,8 @@
+require 'sidekiq/web'
 Rails.application.routes.draw do
+  authenticate :user do
+    mount Sidekiq::Web => '/sidekiq'
+    end
   devise_for :users, controllers: {
     registrations: 'users/registrations'
   }
@@ -12,4 +16,5 @@ Rails.application.routes.draw do
   resources :projects do
     resources :bugs
   end
+  match "*path", to: "errors#not_found", via: :all
 end

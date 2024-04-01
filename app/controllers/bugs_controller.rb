@@ -11,22 +11,30 @@ class BugsController < ApplicationController
   def create
     @bug = @project.bugs.new(bug_params)
     @bug.created_by = current_user.id
-    authorize @bug
 
     if @bug.save
-      @project.users << @bug.user unless @project.users.include?(@bug.user)
+      user_id = params[:bug][:user_id]
+    unless user_id.blank?
+      SendNotificationJob.perform_later([user_id], :bug_assignment, @bug)
+    end
       redirect_to project_bug_path(@project, @bug), notice: "Bug created successfully."
     else
-      render :new
+      render :new , status: :unprocessable_entity
     end
   end
+
+
 
   def update
     authorize @bug
     if @bug.update(bug_params)
+      user_id = params[:bug][:user_id]
+    unless user_id.blank?
+      SendNotificationJob.perform_later([user_id], :bug_assignment, @bug)
+    end
       redirect_to project_bug_path(@project, @bug), notice: "Bug updated successfully."
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -59,6 +67,7 @@ class BugsController < ApplicationController
   end
 
   def bug_params
-    params.require(:bug).permit(:title, :description, :user_id)
+    params.require(:bug).permit(:title, :description, :user_id, :deadline, :screenshot, :bug_type, :status)
   end
+
 end

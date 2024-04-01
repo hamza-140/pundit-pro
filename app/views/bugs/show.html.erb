@@ -1,21 +1,47 @@
 <div class="d-flex justify-content-center align-items-center">
-    <h1>Bug Details</h1>
+  <h1>Bug Details of <%=@project.name%></h1>
 </div>
+
 <form>
   <div class="mb-3">
-    <label for="name" class="form-label">Bug Title:</label>
-    <input readonly class="form-control" id="name" aria-describedby="name" value='<%= @bug.title %>' >
+    <label for="title" class="form-label">Bug Title:</label>
+    <input readonly class="form-control" id="title" value='<%= @bug.title %>'>
   </div>
+
   <div class="mb-3">
     <label for="description" class="form-label">Bug Description:</label>
-    <input readonly class="form-control" id="description" aria-describedby="description" value='<%= @bug.description %>'>
+    <textarea readonly class="form-control" id="description"><%= @bug.description %></textarea>
   </div>
+
+  <div class="mb-3">
+    <label for="deadline" class="form-label">Deadline:</label>
+    <input readonly class="form-control" id="deadline" value='<%= @bug.deadline %>'>
+  </div>
+
+  <div class="mb-3">
+    <label for="screenshot" class="form-label">Screenshot:</label>
+    <%= image_tag(@bug.screenshot.url, alt: 'Screenshot of the bug') %>
+    </div>
+  
+
+  <div class="mb-3">
+    <label for="bug_type" class="form-label">Bug Type:</label>
+    <input readonly class="form-control" id="bug_type" value='<%= @bug.bug_type %>'>
+  </div>
+
+  <div class="mb-3">
+    <label for="status" class="form-label">Status:</label>
+    <input readonly class="form-control" id="status" value='<%= @bug.status %>'>
+  </div>
+
   <div class="mb-3">
     <label for="bug_developer" class="form-label">Bug Developer:</label>
-    <input readonly class="form-control" id="bug_developer" aria-describedby="bug_developer" value="<%= @bug.user ? @bug.user.email : 'Unassigned' %>">
+    <input readonly class="form-control" id="bug_developer" value="<%= @bug.user ? @bug.user.email : 'Unassigned' %>">
   </div>
 </form>
-<% if policy(Bug).update? %>
-<%= link_to 'Edit', edit_project_bug_path(@project, @bug),class:"btn btn-outline-success mb-3" %> 
+
+<% if policy(@bug).update? %>
+  <%= link_to 'Edit', edit_project_bug_path(@project, @bug), class: "btn btn-outline-success mb-3" %> 
 <% end %>
-<%= link_to 'Return', project_path(@project),class:"btn btn-outline-primary mb-3" %>
+
+<%= link_to 'Return', project_path(@project), class: "btn btn-outline-primary mb-3" %>

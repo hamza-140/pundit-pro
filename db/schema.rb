@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_19_165948) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_31_023447) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -22,12 +22,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_19_165948) do
   create_table "bugs", force: :cascade do |t|
     t.string "title"
     t.text "description"
-    t.integer "user_id", null: false
+    t.integer "user_id"
     t.integer "project_id", null: false
     t.integer "created_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deadline"
+    t.string "screenshot"
+    t.string "bug_type", default: "feature", null: false
+    t.string "status", default: "new", null: false
     t.index ["project_id"], name: "index_bugs_on_project_id"
+    t.index ["title"], name: "index_bugs_on_title", unique: true
     t.index ["user_id"], name: "index_bugs_on_user_id"
   end
 
@@ -36,6 +41,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_19_165948) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "created_by"
   end
 
   create_table "projects_users", id: false, force: :cascade do |t|
@@ -59,4 +65,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_19_165948) do
 
   add_foreign_key "bugs", "projects"
   add_foreign_key "bugs", "users"
+  add_foreign_key "projects", "users", column: "created_by"
 end

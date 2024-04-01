@@ -22,6 +22,7 @@
     <a href="#" style="text-decoration:none" class="btn btn-outline-info mx-2 text-nowrap" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
       <i class="bi bi-info-circle"></i>
     </a>
+    
     <!-- Modal -->
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
@@ -54,6 +55,7 @@
               <li>Can view bugs associated with the projects they are assigned to only.</li>
               <li>Cannot create, update, or delete projects.</li>
             </ul>
+            <%= pie_chart User.group(:role).count %>
           </div>
         </div>
       </div>
