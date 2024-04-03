@@ -12,8 +12,8 @@ class ImageUploader < CarrierWave::Uploader::Base
   end
 
   # Add a white list of extensions which are allowed to be uploaded.
-  def extension_whitelist
-    %w[gif png]
+  def extension_allowlist
+    %w(gif png)
   end
 
   # Process files as they are uploaded:

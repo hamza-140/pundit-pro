@@ -235,3 +235,8 @@ body {
     background: linear-gradient(135deg, #289cf5, #84c0ec) !important;
     color: #fff;
 }
+#screenshot-preview {
+    max-width: 200px; /* Set maximum width */
+    max-height: 200px; /* Set maximum height */
+  }
+  

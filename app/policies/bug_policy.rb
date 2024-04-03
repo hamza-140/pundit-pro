@@ -5,16 +5,27 @@ class BugPolicy < ApplicationPolicy
   end
 
   def show?
-    user.present? && (user.role == "manager" || user.role == "quality_assurance" || record.exists?(user_id: user.id) || record.exists?(created_by: user.id))
+    user.present? && (user.role == "manager" ||user.role == "developer" || user.role == "quality_assurance" || record.exists?(user_id: user.id) || record.exists?(created_by: user.id))
   end
 
   def create?
-    user.present? && (user.role == "quality_assurance")
+    user.present? && (user.role == "quality_assurance"||user.role == "manager")
   end
 
   def update?
-    user.present? && ( user.role == "quality_assurance"||user.role == "developer")
+    user.present? && (
+      user.role == "developer" ||
+      record.created_by == user.id
+    )
   end
+
+  def edit?
+    user.present? && (
+      user.role == "developer" ||
+      record.created_by == user.id
+    )
+  end
+
 
   def destroy?
     user.present? && ( user.role == "quality_assurance")
@@ -23,7 +34,7 @@ class BugPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       if user.present? && user.role == "manager"
-        scope.all
+        scope.where(created_by: user.id)
       elsif user.present? && user.role == "developer"
         scope.all
       elsif user.present? && user.role == "quality_assurance"

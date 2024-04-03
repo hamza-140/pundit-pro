@@ -3,6 +3,7 @@
 <table>
   <thead>
     <tr>
+      <th>ID</th>
       <th>Title</th>
       <th>Description</th>
       <th>Developer</th>
@@ -13,16 +14,17 @@
   <tbody>
     <% @bugs.each do |bug| %>
       <tr>
+        <td><%= bug.id %></td>
         <td><%= bug.title %></td>
         <td><%= bug.description %></td>
         <td><%= bug.user ? bug.user.email : "Unassigned" %></td>
-        <td><%= link_to 'Show', project_bug_path(@project, bug) if can? :read, bug %></td>
-        <td><%= link_to 'Edit', edit_project_bug_path(@project, bug) if can? :update, bug %></td>
-        <td><%= link_to 'Destroy', project_bug_path(@project, bug), method: :delete, data: { confirm: 'Are you sure?' } if can? :destroy, bug %></td>
+        <td><%= link_to 'Show', project_bug_path(@project, bug) if policy(bug).show? %></td>
+        <td><%= link_to 'Edit', edit_project_bug_path(@project, bug) if policy(bug).edit? %></td>
+        <td><%= link_to 'Destroy', project_bug_path(@project, bug), method: :delete, data: { confirm: 'Are you sure?' } if policy(bug).destroy? %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= link_to 'New Bug', new_project_bug_path(@project) if can? :create, Bug %>
+<%= link_to 'New Bug', new_project_bug_path(@project) if policy(Bug).create? %>
 <%= link_to 'Back', project_path(@project) %>

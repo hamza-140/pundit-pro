@@ -1,6 +1,9 @@
 <div class="wrapper">
   <% if policy(Project).create? %> 
-    <%= form_for(@project) do |f| %>
+    <%= form_with(model: @project , data:{
+      controller: "nested-form",
+      nested_form_wrapper_selector_value: '.nested-form-wrapper'
+    }) do |f| %>
       <%= render "users/shared/error_messages", resource: @project %>
       <div class="text-center mt-4 name">
             New Project
@@ -26,6 +29,25 @@
         <%= f.collection_check_boxes :user_ids, User.where(role: "quality_assurance"),
         :id, :name %>
       </div>
+
+
+      <template data-nested-form-target="template">
+        <%= f.fields_for :bugs, Bug.new, child_index: 'NEW_RECORD' do |todo_fields| %>
+          <%= render "bug_fields", f: todo_fields %>
+        <% end %>
+      </template>
+
+          <%= f.fields_for :bugs do |todo_fields| %>
+          <%= render "bug_fields", f: todo_fields %>
+        <% end %>
+      
+        <!-- Inserted elements will be injected before that target. -->
+        <div data-nested-form-target="target"></div>
+      
+        <button type="button" data-action="nested-form#add">Add Bug</button>
+      
+
+      <!-- Nested attributes for bugs -->
       
       <div class="actions">
         <%= f.submit"Add",class:"btn mt-3" %>

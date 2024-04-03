@@ -1,0 +1,43 @@
+<div class="wrapper">
+<h2>List of Users</h2>
+
+<!-- <input type="text" id="searchInput" placeholder="Search by email"> -->
+<% if @users.empty? %>
+  <p>No users found!</p>
+<% else %>
+  <ul>
+    <% @users.each do |user| %>
+      <li class="userRow"><%= user.email %></li>
+    <% end %>
+  </ul>
+<% end %>
+<div class="pag-bar">
+  <%== pagy_bootstrap_nav(@pagy) %>
+</div>
+<a style="text-decoration:none" class="btn mx-2 text-nowrap" href="/">Return</a>
+
+</div>
+<!-- Separate script tag for JavaScript code -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#searchInput').on('keyup', function() {
+      var searchText = $(this).val().toLowerCase();
+      
+      $('.userRow').each(function() {
+        var userEmail = $(this).text().toLowerCase();
+        var showUser = true;
+      
+        if (searchText && !userEmail.includes(searchText)) {
+          showUser = false;
+        }
+      
+        if (showUser) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+  });
+</script>

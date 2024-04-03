@@ -1,4 +1,4 @@
-<% if policy(Bug).edit? %>
+<% if policy(@bug).update? %>
 <div class="d-flex justify-content-center align-items-center">
 </div>
 <%= render 'form', update_check: true %>

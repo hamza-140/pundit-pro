@@ -31,34 +31,34 @@
 
     <div class="mb-3">
       <%= form.label :deadline, class: "form-label" %>
-      <%= form.date_field :deadline, class: "form-control" %>
+      <%= form.date_field :deadline, class: "form-control", id: "deadline-field" %>
     </div>
 
     <div class="mb-3">
       <%= form.label :screenshot, class: "form-label" %>
-      <%= form.file_field :screenshot, class: "form-control" %>
+      <div id="screenshot-upload">
+        <%= image_tag(@bug.screenshot_url, alt: 'Screenshot of the bug', id: 'screenshot-preview') if @bug.screenshot?%>      
+        <%= form.file_field :screenshot, class: "form-control", accept: "image/png, image/gif" %>
+      </div>
     </div>
 
     <div class="mb-3">
       <%= form.label :bug_type, class: "form-label" %>
-      <%= form.select :bug_type, ['feature', 'bug'], prompt: "Select Type", class: "form-select" %>
+      <%= form.select :bug_type, ['feature', 'bug'], { selected: @bug.bug_type }, prompt: "Select Type", class: "form-select", id: "bug" %>
     </div>
-
+    
+    <!-- Status Field -->
     <div class="mb-3">
       <%= form.label :status, class: "form-label" %>
-      <% if @bug && @bug.bug_type == 'feature' %>
-        <% status_options = ['new', 'started', 'completed'] %>
-      <% else %>
-        <% status_options = ['new', 'started', 'resolved'] %>
-      <% end %>
-      <%= form.select :status, status_options, prompt: "Select Status", class: "form-select" %>
+      <%= form.select :status, ['new', 'started','completed'], { selected: @bug.status }, prompt: "Select status", class: "form-select", id: "status-field" %>
     </div>
+    
     
     <div class="mb-3">
       <%= form.label "Assign to ", class: "form-label" %>
     <div class="form-field d-flex align-items-center role-field mb-3">
       <i class="bi bi-person-plus"></i>
-      <%= form.collection_select :user_id, User.where(role: "developer").to_a.unshift(User.new(name: "None")), :id, :name, prompt: "Select developer", class: "form-select" %>
+      <%= form.collection_select :user_id, @project.users.where(role: "developer").to_a.unshift(User.new(name: "None")), :id, :name, prompt: "Select developer", class: "form-select" %>
     </div>
     </div>
     
@@ -69,3 +69,89 @@
     </div>
   <% end %>
 </div>
+<script type="text/javascript">
+  // Get the current date
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth() + 1; //January is 0!
+  var yyyy = today.getFullYear();
+
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+
+  if (mm < 10) {
+    mm = '0' + mm;
+  }
+
+  today = yyyy + '-' + mm + '-' + dd;
+
+  // Set minimum value of the deadline field to today's date
+  document.getElementById('deadline-field').setAttribute('min', today);
+
+var bugType = document.getElementById('bug').value;
+console.log(bugType)
+var statusField = document.getElementById('status-field').value;
+console.log(statusField)
+document.getElementById('bug').addEventListener('change', () => {
+    var bugType = document.getElementById('bug').value;
+    var statusField = document.getElementById('status-field');
+    statusField.innerHTML = "";
+    var statusOptions;
+  if (bugType === 'feature') {
+    statusOptions = ['new', 'started', 'completed'];
+  } else {
+    statusOptions = ['new', 'started', 'resolved'];
+  }
+
+  // Append new options
+  statusOptions.forEach(function(option) {
+    var optionElement = document.createElement('option');
+    optionElement.text = option.charAt(0) + option.slice(1); // Capitalize first letter
+    optionElement.value = option;
+    statusField.appendChild(optionElement);
+  });
+    console.log(bugType);
+});
+var screenshotField = document.getElementById('bug_screenshot');
+  var removeButton = document.getElementById('remove-screenshot');
+
+  // Check if a file is uploaded
+  screenshotField.addEventListener('change', function() {
+    if (screenshotField.files.length > 0) {
+      // Display the remove button
+      removeButton.style.display = 'block';
+    } else {
+      // Hide the remove button if no file is uploaded
+      removeButton.style.display = 'none';
+    }
+  });
+
+  // Remove uploaded file when the remove button is clicked
+  removeButton.addEventListener('click', function() {
+    event.preventDefault();
+    // Reset the file input field
+    screenshotField.value = '';
+    // Hide the remove button
+    removeButton.style.display = 'none';
+  });
+  var screenshotField = document.getElementById('bug_screenshot');
+  console.log(screenshotField)
+var imageTag = document.getElementById('screenshot-preview');
+console.log(imageTag)
+// // Listen for changes in the file input field
+screenshotField.addEventListener('change', function(event) {
+  var file = event.target.files[0]; // Get the selected file
+  var reader = new FileReader(); // Create a file reader object
+
+  reader.onload = function(e) {
+    // Set the src attribute of the image tag to the data URL of the selected file
+    imageTag.src = e.target.result;
+    imageTag.style.width = '200px';
+    imageTag.style.height = '200px';
+  };
+
+  // Read the selected file as a data URL
+  reader.readAsDataURL(file);
+});
+</script>

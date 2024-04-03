@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <%= javascript_import_module_tag "nested-forms" %>
     <%= favicon_link_tag asset_path('logo.png') %>
   </head>
 
@@ -32,21 +33,4 @@
     <%= yield %>
   </div>
   </body>
-  <script>
-    
-    document.getElementById('searchForm').addEventListener('submit', function(e) {
-      e.preventDefault(); 
-      var searchText = document.getElementById('searchInput').value.toLowerCase();
-      var rows = document.querySelectorAll('.projectRow');
-      rows.forEach(function(row) {
-        var productName = row.querySelector('td').innerText.toLowerCase();
-        
-        if (productName.includes(searchText)) {
-          row.style.display = 'table-row'; 
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    });
-  </script>
 </html>

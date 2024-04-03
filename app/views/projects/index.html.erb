@@ -16,13 +16,12 @@
     <% if policy(Project).create? %>
       <a style="text-decoration:none" class="btn btn-outline-primary mx-2 text-nowrap" href="<%= new_project_path %>">New Project</a>
     <% end %>
-    <% if policy(Bug).create? %>
-      <a style="text-decoration:none" class="btn btn-outline-warning mx-2 text-nowrap" href="<%= projects_bugs_path %>">New Bug</a>
-    <% end %>
     <a href="#" style="text-decoration:none" class="btn btn-outline-info mx-2 text-nowrap" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
       <i class="bi bi-info-circle"></i>
     </a>
-    
+    <a href="<%=projects_users_path%>" style="text-decoration:none" class="btn btn-outline-warning mx-2 text-nowrap">
+      <i class="bi bi-people"></i>
+    </a>
     <!-- Modal -->
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
@@ -93,20 +92,7 @@
   </table>
 </div>
 
-<h2>List of Users</h2>
-<% if @users.empty? %>
-  <p>No users found!</p>
-<% else %>
-  <ul>
-    <% @users.each do |user| %>
-      <li><%= user.email %></li>
-    <% end %>
-  </ul>
-<% end %>
-<div class="pag-bar">
-    <%== pagy_bootstrap_nav(@pagy) %>
-  </div>
+
   <%if current_user%>
 <p>Logged in as <%= current_user.name %> </p>
 <%end%>
-<%= link_to "Logout", destroy_user_session_path %>

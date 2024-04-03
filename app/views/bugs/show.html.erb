@@ -20,8 +20,10 @@
 
   <div class="mb-3">
     <label for="screenshot" class="form-label">Screenshot:</label>
+    <% if @bug.screenshot.present? %>
     <%= image_tag(@bug.screenshot.url, alt: 'Screenshot of the bug') %>
-    </div>
+  <% end %>    
+</div>
   
 
   <div class="mb-3">
@@ -37,6 +39,11 @@
   <div class="mb-3">
     <label for="bug_developer" class="form-label">Bug Developer:</label>
     <input readonly class="form-control" id="bug_developer" value="<%= @bug.user ? @bug.user.email : 'Unassigned' %>">
+  </div>
+  <div class="mb-3">
+    <label for="project_users" class="form-label">Bug Creator:</label>
+    <% creator = User.find(@bug.created_by) %>
+    <input readonly class="form-control" id="project_users" aria-describedby="project_users" value='<%= creator.name %>'>
   </div>
 </form>
 

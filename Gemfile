@@ -73,3 +73,4 @@ gem 'pagy'
 gem "chartkick"
 gem 'carrierwave'
 gem 'sidekiq'
+gem 'ransack'

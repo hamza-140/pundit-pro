@@ -28,8 +28,8 @@
     <div class="actions">
       <%= f.submit "Update",class:"btn mt-3"%>
     </div>
-    <%= link_to "Return", projects_path , class:"btn mt-3"%>
-  <% end %>
+    <%= link_to "Return", "javascript:history.back()", class: "btn mt-3" %>
+    <% end %>
 <% else %>
   <p>You are not authorized to edit this project.</p>
 <% end %>

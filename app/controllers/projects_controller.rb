@@ -3,7 +3,6 @@ class ProjectsController < ApplicationController
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
   def index
-    @pagy, @users = pagy(User.all)
     @projects = policy_scope(Project)
     authorize @projects
   end
@@ -17,6 +16,7 @@ class ProjectsController < ApplicationController
     @project = Project.new(project_params)
     @project.users << current_user
     @project.created_by = current_user.id
+    # @project.bugs.created_by = current_user.id
 
     authorize @project
 
@@ -25,6 +25,7 @@ class ProjectsController < ApplicationController
         user_ids = params[:user_ids].reject(&:empty?)
         user_ids.each do |user_id|
           @project.users << User.find(user_id)
+
         end
       end
       SendNotificationJob.perform_later(@project.users.pluck(:id), :project_assignment, @project)
@@ -33,6 +34,10 @@ class ProjectsController < ApplicationController
       @users = User.all
       render :new, status: :unprocessable_entity
       end
+    rescue ActiveRecord::RecordNotUnique => e
+      @project.errors.add(:base, "A bug with the same title already exists.")
+      render :new, status: :unprocessable_entity
+
   end
 
   def update
@@ -88,12 +93,18 @@ class ProjectsController < ApplicationController
     @project = Project.new
     @users = User.all
     @bug = Bug.new(project: @project)
-
+    @project.bugs.build
+    @bug.created_by = current_user.id
     authorize @project
   end
 
   def edit
     authorize @project
+  end
+
+  def users
+    @pagy, @users = pagy(User.all)
+    # @users = User.all
   end
 
   private
@@ -103,6 +114,18 @@ class ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:name, :description, user_ids: [])
+    params.require(:project).permit(
+      :name,
+      :description,
+      :created_by,
+      user_ids: [],
+      bugs_attributes: [:id, :title, :description, :user_id, :deadline, :screenshot, :bug_type, :status]
+    ).tap do |whitelisted|
+      if whitelisted[:bugs_attributes].present?
+      whitelisted[:bugs_attributes].each do |_, bug_attributes|
+        bug_attributes[:created_by] = current_user.id
+      end
+    end
   end
+end
 end

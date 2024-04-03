@@ -1,4 +1,5 @@
 class Bug < ApplicationRecord
+  
   belongs_to :user,optional:true
   belongs_to :project
   validates :title, presence: true, uniqueness: { scope: :project_id }
