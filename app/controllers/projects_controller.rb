@@ -3,9 +3,14 @@ class ProjectsController < ApplicationController
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
   def index
+    # puts params.inspect # Add this line for debugging
     @projects = policy_scope(Project)
+    @query = params[:q]
+    @items = @projects.where("name LIKE ?", "%#{@query}%")
+    @pagy, @items = pagy(@items)
     authorize @projects
   end
+
 
   def bugs
     @projects = current_user.projects
@@ -116,6 +121,7 @@ class ProjectsController < ApplicationController
   def project_params
     params.require(:project).permit(
       :name,
+      :q,
       :description,
       :created_by,
       user_ids: [],

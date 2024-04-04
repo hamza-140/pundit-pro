@@ -23,12 +23,12 @@
 
   <div class="mb-3">
     <%= f.label :bug_type, class: "form-label" %>
-    <%= f.select :bug_type, ['feature', 'bug'], prompt: "Select Type", class: "form-select", id: "bug" %>
+    <%= f.select :bug_type, ['feature', 'bug'], class: "form-select", id: "bug" %>
   </div>
   
   <div class="mb-3">
     <%= f.label :status, class: "form-label" %>
-    <%= f.select :status, ['new', 'started','completed'], prompt: "Select status", class: "form-select", id: "status-field" %>
+    <%= f.select :status,  ['new', 'started','completed'],class: "form-select", id: "status-field" %>
   </div>
   
   
@@ -44,13 +44,13 @@
 </div>
  <script type="text/javascript">
 
-var bugType = document.getElementById('bug').value;
+var bugType = document.getElementById('project_bugs_attributes_0_bug_type').value;
 console.log(bugType)
-var statusField = document.getElementById('status-field').value;
+var statusField = document.getElementById('project_bugs_attributes_0_status').value;
 console.log(statusField)
-document.getElementById('bug').addEventListener('change', () => {
-    var bugType = document.getElementById('bug').value;
-    var statusField = document.getElementById('status-field');
+document.getElementById('project_bugs_attributes_0_bug_type').addEventListener('change', () => {
+    var bugType = document.getElementById('project_bugs_attributes_0_bug_type').value;
+    var statusField = document.getElementById('project_bugs_attributes_0_status');
     statusField.innerHTML = "";
     var statusOptions;
   if (bugType === 'feature') {
