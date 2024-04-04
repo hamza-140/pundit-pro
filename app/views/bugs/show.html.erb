@@ -50,5 +50,10 @@
 <% if policy(@bug).update? %>
   <%= link_to 'Edit', edit_project_bug_path(@project, @bug), class: "btn btn-outline-success mb-3" %> 
 <% end %>
-
+<% if policy(@bug).destroy?%>
+<%= link_to "Delete", [@bug.project, @bug], data: {
+  turbo_method: :delete,
+  turbo_confirm: "Are you sure?"
+} ,class:"btn btn-outline-danger mb-3"%>
+<% end %>
 <%= link_to 'Return', project_path(@project), class: "btn btn-outline-primary mb-3" %>

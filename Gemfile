@@ -74,3 +74,4 @@ gem "chartkick"
 gem 'carrierwave'
 gem 'sidekiq'
 gem 'ransack'
+gem 'dotenv-rails', groups: [:development, :test]

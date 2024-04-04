@@ -1,3 +1,5 @@
+require 'dotenv/load'
+
 Rails.application.configure do
   config.enable_reloading = true
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
@@ -10,8 +12,8 @@ Rails.application.configure do
     address:              'smtp.gmail.com',
     port:                 587,
     domain:               'BugMe',
-    user_name:            'sahamzashah19@gmail.com',
-    password:             'indcckmzdoqerweo',
+    user_name:            ENV['GMAIL_USERNAME'],
+    password:             ENV['GMAIL_PASSWORD'],
     authentication:       'plain',
     enable_starttls_auto: true
   }
