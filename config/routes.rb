@@ -1,24 +1,17 @@
-require 'sidekiq/web'
 
 Rails.application.routes.draw do
-  authenticate :user do
-    mount Sidekiq::Web => '/sidekiq'
-  end
 
-  devise_for :users, controllers: {
-    registrations: 'users/registrations'
-  }
+  # root to: 'api/v1/projects#index' # Changed to point to the index action of the API v1 projects controller
+  get '/api/v1/projects/bugs', to: 'api/v1/projects#bugs' # Updated to match the new controller namespace
+  get '/api/v1/projects/users', to: 'api/v1/projects#users' # Updated to match the new controller namespace
+  root 'homepage#index'
 
-  devise_scope :user do
-    get '/users/sign_out' => 'devise/sessions#destroy'
-  end
-
-  root to: 'homepage#index'
-  get '/projects/bugs', to: 'projects#bugs'
-  get '/projects/users', to: 'projects#users'
-
-  resources :projects do
-    resources :bugs
+  namespace :api do
+    namespace :v1 do
+      resources :projects do # Updated to be within the API v1 namespace
+        resources :bugs
+      end
+    end
   end
 
   match "*path", to: "errors#not_found", via: :all

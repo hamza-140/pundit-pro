@@ -1,23 +1,27 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
 
-export default () => (
-  <div className="vw-100 vh-100 primary-color d-flex align-items-center justify-content-center">
-    <div className="jumbotron jumbotron-fluid bg-transparent">
-      <div className="container secondary-color">
-        <h1 className="display-4">Food Recipes 🍕 </h1>
-        <p className="lead">
-          A curated list of recipes for the best homemade meal and delicacies.
-        </p>
-        <hr className="my-4" />
-        <Link
-          to="/recipes"
-          className="btn btn-lg custom-button"
-          role="button"
-        >
-          View Recipes
-        </Link>
-      </div>
+function ProjectList() {
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/v1/projects')
+      .then(response => response.json())
+      .then(data => setProjects(data))
+      .catch(error => console.error('Error fetching projects:', error));
+  }, []);
+
+  return (
+    <div>
+      <h1>Projects</h1>
+      <ul>
+        {projects.map(project => (
+          <li key={project.id}>
+            <a href={`/projects/${project.id}`}>{project.name}</a>
+          </li>
+        ))}
+      </ul>
     </div>
-  </div>
-);
+  );
+}
+
+export default ProjectList;
