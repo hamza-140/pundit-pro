@@ -55,13 +55,9 @@ class ProjectsController < ApplicationController
       # Determine newly added users
     new_user_ids = @project.user_ids - current_user_ids
       # Send notification to newly added users
-      current_user_ids.each do |user_id|
-        print(user_id)
-        end
-      print("==========+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-      new_user_ids.each do |user_id|
-        SendNotificationJob.perform_later([user_id], :project_assignment, @project)
-            end
+    new_user_ids.each do |user_id|
+      SendNotificationJob.perform_later([user_id], :project_assignment, @project)
+          end
             # SendNotificationJob.perform_later(new_users.pluck(:id), :project_assignment, @project)
 
 
@@ -73,15 +69,12 @@ class ProjectsController < ApplicationController
 
 
   def destroy
-
-
     @project.destroy
     redirect_to projects_url, notice: "Project deleted successfully."
   end
 
   def show
     authorize @project
-
     @bug = Bug.new(project: @project)
 
     if current_user.role == "quality_assurance"

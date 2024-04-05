@@ -32,14 +32,6 @@
   </div>
   
   
-  <div class="mb-3">
-    <%= f.label "Assign to ", class: "form-label" %>
-  <div class="form-field d-flex align-items-center role-field mb-3">
-    <i class="bi bi-person-plus"></i>
-    <%= f.collection_select :user_id, @project.users.where(role: "developer").to_a.unshift(User.new(name: "None")), :id, :name, prompt: "Select developer", class: "form-select" %>
-  </div>
-  </div>
-  
   <button type="button" data-action="nested-form#remove">Remove Bug</button>
 </div>
  <script type="text/javascript">
