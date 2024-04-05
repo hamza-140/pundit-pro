@@ -1,8 +1,10 @@
 require 'sidekiq/web'
+
 Rails.application.routes.draw do
   authenticate :user do
     mount Sidekiq::Web => '/sidekiq'
-    end
+  end
+
   devise_for :users, controllers: {
     registrations: 'users/registrations'
   }
@@ -11,7 +13,7 @@ Rails.application.routes.draw do
     get '/users/sign_out' => 'devise/sessions#destroy'
   end
 
-  root to: 'projects#index'
+  root to: 'homepage#index'
   get '/projects/bugs', to: 'projects#bugs'
   get '/projects/users', to: 'projects#users'
 
