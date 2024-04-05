@@ -76,7 +76,6 @@
   </table>
 </div>
 
-<!-- Separate script tag for JavaScript code -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   $(document).ready(function() {
@@ -84,11 +83,9 @@
       var type = $(this).val();
       var statusOptions = $('#statusFilter');
 
-      // Clear previous options
       statusOptions.empty();
 
       if (type === 'feature') {
-        // Populate status options for feature
         statusOptions.append($('<option>', {
           value: '',
           text: 'All'
@@ -124,7 +121,6 @@
           text: 'Resolved'
         }));
       } else {
-        // Default status options
         statusOptions.append($('<option>', {
           value: '',
           text: 'All'
