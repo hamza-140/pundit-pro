@@ -1,18 +1,19 @@
-
 Rails.application.routes.draw do
-
-  # root to: 'api/v1/projects#index' # Changed to point to the index action of the API v1 projects controller
-  get '/api/v1/projects/bugs', to: 'api/v1/projects#bugs' # Updated to match the new controller namespace
-  get '/api/v1/projects/users', to: 'api/v1/projects#users' # Updated to match the new controller namespace
-  root 'homepage#index'
-
   namespace :api do
     namespace :v1 do
-      resources :projects do # Updated to be within the API v1 namespace
-        resources :bugs
-      end
+      get 'recipes/index'
+      get 'projects/index'
+      post 'recipes/create'
+
+      # get '/show/:id', to: 'recipes#show'
+      get '/show/:id', to: 'projects#show'
+      delete '/destroy/:id', to: 'recipes#destroy'
     end
   end
+  root 'homepage#index'
+  get '/*path' => 'homepage#index'
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  match "*path", to: "errors#not_found", via: :all
+  # Defines the root path route ("/")
+  # root "articles#index"
 end

@@ -1,6 +1,6 @@
 class Api::V1::ProjectsController < ApplicationController
-  before_action :authenticate_user!
       before_action :set_project, only: [:show, :edit, :update, :destroy]
+      before_action :set_recipe, only: %i[show destroy]
 
       def index
         # puts params.inspect # Add this line for debugging
@@ -9,8 +9,8 @@ class Api::V1::ProjectsController < ApplicationController
         # @items = @projects.where("name LIKE ?", "%#{@query}%")
         # @pagy, @items = pagy(@items)
         # authorize @projects
-        @items = Project.all
-        render json: @items
+        project = Project.all
+        render json: project
       end
 
       def bugs
@@ -66,17 +66,21 @@ class Api::V1::ProjectsController < ApplicationController
       end
 
       def show
-        authorize @project
-        @bug = Bug.new(project: @project)
+        # @bug = Bug.new(project: @project)
 
-        if current_user.role == "quality_assurance"
-          @bugs = policy_scope(@project.bugs)
+        # if current_user.role == "quality_assurance"
+        #   @bugs = policy_scope(@project.bugs)
+        # else
+        #   @bugs = @project.bugs.all
+        # end
+
+        # authorize @bugs
+        # render json: @project
+        if @project
+          render json: @project
         else
-          @bugs = @project.bugs.all
+          render json: @project.errors
         end
-
-        authorize @bugs
-        render json: @project
       end
 
       def new
@@ -103,21 +107,10 @@ class Api::V1::ProjectsController < ApplicationController
       def set_project
         @project = Project.find(params[:id])
       end
-
-      def project_params
-        params.require(:project).permit(
-          :name,
-          :q,
-          :description,
-          :created_by,
-          user_ids: [],
-          bugs_attributes: [:id, :title, :description, :user_id, :deadline, :screenshot, :bug_type, :status]
-        ).tap do |whitelisted|
-          if whitelisted[:bugs_attributes].present?
-            whitelisted[:bugs_attributes].each do |_, bug_attributes|
-              bug_attributes[:created_by] = current_user.id
-            end
-          end
-        end
+      def set_recipe
+        @project = Project.find(params[:id])
       end
+      def project_params
+        params.require(:project).permit(:name,:description)
+        end
 end
