@@ -28,6 +28,9 @@ const Project = () => {
         </h1>
       </div>
       <div className="container py-5">
+        <div>
+        {project.description}
+        </div>
         <Link to="/projects" className="btn btn-link">
           Back to Projects
         </Link>

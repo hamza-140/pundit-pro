@@ -4,8 +4,8 @@ import Home from "../components/Home";
 import Recipes from "../components/Recipes";
 import Recipe from "../components/Recipe";
 import NewRecipe from "../components/NewRecipe";
-import Projects from "../components/Projects";
-import Project from "../components/Project";
+import Projects from "../components/Project/Projects";
+import Project from "../components/Project/Project";
 export default (
   <Router>
     <Routes>
