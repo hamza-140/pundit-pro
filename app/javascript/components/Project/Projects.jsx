@@ -1,10 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
+import axios from 'axios'; // Import axios for making HTTP requests
+
+import ProjectList from "./ProjectList"; // Import the ProjectList component
 
 const Projects = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
-
+  const [createProjectAllowed, setCreateProjectAllowed] = useState(false);
+  // const handleLogout = () => {
+  //   axios.delete('/users/sign_out') // Send a DELETE request to the logout path
+  //     .then(response => {
+  //       // Handle success, like redirecting the user to the login page
+  //       window.location.href = '/';
+  //     })
+  //     .catch(error => {
+  //       // Handle error, like displaying an error message
+  //       console.error('Logout failed:', error);
+  //     });
+  // };
+  
   useEffect(() => {
     const url = "/api/v1/projects/index";
     fetch(url)
@@ -14,40 +30,37 @@ const Projects = () => {
         }
         throw new Error("Network response was not ok.");
       })
-      .then((res) => setProjects(res))
+      .then((res) => {
+        setProjects(res);
+        setCreateProjectAllowed(true);
+      })
       .catch(() => navigate("/"));
-  }, []);
+  }, [navigate]);
 
-  const allProjects = projects.map((project, index) => (
-    <div key={index} className="col-md-6 col-lg-4">
-      <div className="card mb-4">
-        <div className="card-body">
-          <h5 className="card-title">{project.name}</h5>
-          <Link to={`/project/${project.id}`} className="btn custom-button">
-            View Project
-          </Link>
-        </div>
-      </div>
-    </div>
-  ));
-  const noProject = (
-    <div className="vw-100 vh-50 d-flex align-items-center justify-content-center">
-      <h4>
-        No projects yet.
-      </h4>
-    </div>
-  );
+ 
+  const editProjectPath = (projectId) => {
+    // Logic to generate edit project path
+    return `/project/${projectId}/edit`;
+  };
 
   return (
-    <>
-      <div className="py-5">
-        <main className="container">
-          <div className="row">
-            {projects.length > 0 ? allProjects : noProject}
-          </div>
-        </main>
-      </div>
-    </>
+    <div className="py-5">
+      <main className="container">
+        <Navbar 
+          createProjectAllowed={createProjectAllowed}
+          newProjectPath="/project/new"
+          projectsUsersPath="/projects_users"
+        />
+        <ProjectList 
+          projects={projects}
+          editProjectPath={editProjectPath}
+        />
+      </main>
+      {/* <button onClick={handleLogout}>
+      Log out
+    </button> */}
+    </div>
+    
   );
 };
 

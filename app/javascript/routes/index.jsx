@@ -6,15 +6,16 @@ import Recipe from "../components/Recipe";
 import NewRecipe from "../components/NewRecipe";
 import Projects from "../components/Project/Projects";
 import Project from "../components/Project/Project";
+import EditProject from "../components/Project/EditProject";
+import NewProject from "../components/Project/NewProject";
 export default (
   <Router>
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/recipes" element={<Recipes />} />
-      <Route path="/recipe/:id" element={<Recipe />} />
+    <Route path="/" element={<Projects />} />
       <Route path="/project/:id" element={<Project />} />
-      <Route path="/recipe" element={<NewRecipe />} />
       <Route path="/projects" element={<Projects/>}/>
+      <Route path="/project/:id/edit" element={<EditProject />} />
+      <Route path="/project/new" element={<NewProject />} />
     </Routes>
   </Router>
 );

@@ -1,40 +1,85 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const Project = () => {
   const params = useParams();
-  const navigate = useNavigate();
-  const [project, setProject] = useState({ });
-
+  const [project, setProject] = useState({});
+  const [bugs, setBugs] = useState([]);
+ 
   useEffect(() => {
-    const url = `/api/v1/show/${params.id}`;
-    fetch(url)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
+    const fetchProject = async () => {
+      try {
+        const response = await fetch(`/api/v1/show/${params.id}`);
+        if (!response.ok) {
+          throw new Error("Network response was not ok.");
         }
-        throw new Error("Network response was not ok.");
-      })
-      .then((response) => setProject(response))
-      .catch(() => navigate("/projects"));
+        const data = await response.json();
+        setProject(data.project);
+        setBugs(data.bugs);
+      } catch (error) {
+        console.error("Error fetching project:", error);
+      }
+    };
+
+    fetchProject();
   }, [params.id]);
 
   return (
-    <div className="">
-      <div className="hero position-relative d-flex align-items-center justify-content-center">
-        <div className="overlay bg-dark position-absolute" />
-        <h1 className="display-4 position-relative text-white">
-          {project.name}
-        </h1>
+    <div className="container py-5">
+      <div className="d-flex justify-content-center align-items-center">
+        <h1>Project Details</h1>
       </div>
-      <div className="container py-5">
-        <div>
-        {project.description}
+      <form>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">
+            Project Name:
+          </label>
+          <input
+            readOnly
+            className="form-control"
+            id="name"
+            aria-describedby="name"
+            value={project.name}
+          />
         </div>
-        <Link to="/projects" className="btn btn-link">
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">
+            Project Description:
+          </label>
+          <input
+            readOnly
+            className="form-control"
+            id="description"
+            aria-describedby="description"
+            value={project.description}
+          />
+        </div>
+        <h4>List of Bugs:</h4>
+        <div id="searchResults">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Bug Name</th>
+                <th>Bug Status</th>
+                <th>Bug Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bugs.map((bug) => (
+                <tr key={bug.id} className="projectRow">
+                  <td>{bug.title}</td>
+                  <td>{bug.status}</td>
+                  <td>{bug.bug_type}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <Link to="/projects" className="btn btn-primary">
           Back to Projects
         </Link>
-      </div>
+      </form>
     </div>
   );
 };
