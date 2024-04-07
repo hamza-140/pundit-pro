@@ -10,29 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_31_023447) do
-  create_table "articles", force: :cascade do |t|
-    t.string "title"
-    t.text "body"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "published"
-  end
+ActiveRecord::Schema[7.1].define(version: 2024_04_07_003054) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "bugs", force: :cascade do |t|
     t.string "title"
     t.text "description"
-    t.integer "user_id"
-    t.integer "project_id", null: false
+    t.bigint "user_id"
+    t.bigint "project_id", null: false
     t.integer "created_by"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.datetime "deadline"
     t.string "screenshot"
-    t.string "bug_type", default: "feature", null: false
-    t.string "status", default: "new", null: false
+    t.string "bug_type"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_bugs_on_project_id"
-    t.index ["title"], name: "index_bugs_on_title", unique: true
     t.index ["user_id"], name: "index_bugs_on_user_id"
   end
 
@@ -41,12 +35,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_31_023447) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "created_by"
   end
 
-  create_table "projects_users", id: false, force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "user_id", null: false
+  create_table "recipes", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "ingredients", null: false
+    t.text "instruction", null: false
+    t.string "image", default: "https://raw.githubusercontent.com/do-community/react_rails_recipe/master/app/assets/images/Sammy_Meal.jpg"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -57,13 +54,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_31_023447) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "role"
-    t.string "name"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "bugs", "projects"
   add_foreign_key "bugs", "users"
-  add_foreign_key "projects", "users", column: "created_by"
 end

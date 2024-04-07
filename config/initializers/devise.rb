@@ -14,7 +14,7 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  # config.secret_key = '04a5c63f99e845aafd2a0ef5113abb138734e4841f84072f1ba58e4e1cf76e7e4ec9062eb7851c98fb773de083751846a50c25f155f81b72255c25e10e008505'
+  # config.secret_key = 'c3c1ab2e758524b800d8790a835243ef6b12857375c08b22c48b74edb142b9b60576b8f5a336a64fc4f3d17a1fe695a036a945f8c766e2fa7855cb8dc4e12bac'
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
@@ -25,7 +25,7 @@ Devise.setup do |config|
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
   config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
-  config.scoped_views = true
+
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
 
@@ -37,6 +37,7 @@ Devise.setup do |config|
   # :mongoid (bson_ext recommended) by default. Other ORMs may be
   # available as additional gems.
   require 'devise/orm/active_record'
+
   # ==> Configuration for any authentication mechanism
   # Configure which keys are used when authenticating a user. The default is
   # just :email. You can configure it to use [:username, :subdomain], so for
@@ -125,7 +126,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 12
 
   # Set up a pepper to generate the hashed password.
-  # config.pepper = '77824be225e281c4cc2c5e0f214daff48b9f80a991c8bfff177f5e10d10dbbd8e5cdfa2d0b5c37a32206a7f225abf9ecb6d8e0f6c1c4ea74d239308985dd08c3'
+  # config.pepper = 'd45c03f6dd09a85596391487565e2d4d70665ec57d0f635bba33fbe3dbd0340341c00167c886085c3d7efb6287708cbc68fe1a59ad0b03fb6f0b240b56d64e61'
 
   # Send a notification to the original email when the user's email is changed.
   # config.send_email_changed_notification = false
@@ -305,8 +306,8 @@ Devise.setup do |config|
   config.responder.redirect_status = :see_other
 
   # ==> Configuration for :registerable
-
-  # When set to false, does not sign a user in automatically after their password is
+  config.navigational_formats = ['*/*', :html, :turbo_stream]
+     # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
 end
