@@ -8,14 +8,20 @@ import Projects from "../components/Project/Projects";
 import Project from "../components/Project/Project";
 import EditProject from "../components/Project/EditProject";
 import NewProject from "../components/Project/NewProject";
+import NewBug from "../components/Bug/NewBug";
+import Bug from "../components/Bug/Bug";
+import EditBug from "../components/Bug/EditBug";
 export default (
   <Router>
     <Routes>
     <Route path="/" element={<Projects />} />
       <Route path="/project/:id" element={<Project />} />
+      <Route path="/project/:project_id/bug/:bug_id" element={<Bug />} />
       <Route path="/projects" element={<Projects/>}/>
       <Route path="/project/:id/edit" element={<EditProject />} />
+      <Route path="/project/:project_id/bug/:bug_id/edit" element={<EditBug/>} />
       <Route path="/project/new" element={<NewProject />} />
+      <Route path="/project/:project_id/bug/new" element={<NewBug />} />
     </Routes>
   </Router>
 );

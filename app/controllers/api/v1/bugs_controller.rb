@@ -8,21 +8,32 @@ class Api::V1::BugsController < ApplicationController
     render json: @bugs
   end
 
-  # POST /api/v1/projects/:project_id/bugs
   def create
     @bug = @project.bugs.new(bug_params)
     @bug.created_by = current_user.id
-
+    @bug.project_id = @project.id
     if @bug.save
-      user_id = params[:bug][:user_id]
-      unless user_id.blank?
-        SendNotificationJob.perform_later([user_id], :bug_assignment, @bug)
-      end
       render json: @bug, status: :created
     else
       render json: @bug.errors, status: :unprocessable_entity
     end
   end
+
+  # POST /api/v1/projects/:project_id/bugs
+  # def create
+  #   @bug = @project.bugs.new(bug_params)
+  #   @bug.created_by = 1
+
+  #   if @bug.save
+  #     user_id = params[:bug][:user_id]
+  #     unless user_id.blank?
+  #       SendNotificationJob.perform_later([user_id], :bug_assignment, @bug)
+  #     end
+  #     render json: @bug, status: :created
+  #   else
+  #     render json: @bug.errors, status: :unprocessable_entity
+  #   end
+  # end
 
   # GET /api/v1/projects/:project_id/bugs/:id
   def show
@@ -30,22 +41,28 @@ class Api::V1::BugsController < ApplicationController
   end
 
   # PUT /api/v1/projects/:project_id/bugs/:id
+  # def update
+  #   if @bug.update(bug_params)
+  #     user_id = params[:bug][:user_id]
+  #     unless user_id.blank?
+  #       SendNotificationJob.perform_later([user_id], :bug_assignment, @bug)
+  #     end
+  #     if params[:bug][:remove_screenshot].present?
+  #       @bug.screenshot = nil
+  #       @bug.save
+  #     end
+  #     render json: @bug
+  #   else
+  #     render json: @bug.errors, status: :unprocessable_entity
+  #   end
+  # end
   def update
     if @bug.update(bug_params)
-      user_id = params[:bug][:user_id]
-      unless user_id.blank?
-        SendNotificationJob.perform_later([user_id], :bug_assignment, @bug)
-      end
-      if params[:bug][:remove_screenshot].present?
-        @bug.screenshot = nil
-        @bug.save
-      end
-      render json: @bug
+      render json: @bug, status: :ok
     else
       render json: @bug.errors, status: :unprocessable_entity
     end
   end
-
   # DELETE /api/v1/projects/:project_id/bugs/:id
   def destroy
     @bug.destroy

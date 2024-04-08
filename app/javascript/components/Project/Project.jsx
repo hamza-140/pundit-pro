@@ -5,7 +5,7 @@ const Project = () => {
   const params = useParams();
   const [project, setProject] = useState({});
   const [bugs, setBugs] = useState([]);
- 
+
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -67,7 +67,14 @@ const Project = () => {
             <tbody>
               {bugs.map((bug) => (
                 <tr key={bug.id} className="projectRow">
-                  <td>{bug.title}</td>
+                  <td>
+                    <Link
+                      to={`/project/${project.id}/bug/${bug.id}`}
+                      style={{ textDecoration: "none", color: "black" }}
+                    >
+                      {bug.title}
+                    </Link>
+                  </td>
                   <td>{bug.status}</td>
                   <td>{bug.bug_type}</td>
                 </tr>
@@ -75,6 +82,20 @@ const Project = () => {
             </tbody>
           </table>
         </div>
+        <Link
+          to={`/project/${params.id}/bug/new`}
+          className="btn btn-outline-warning mx-2 text-nowrap"
+          style={{ marginRight: "10px" }}
+        >
+          New Bug
+        </Link>
+        <Link
+          to={`/project/${project.id}/edit`}
+          className="btn btn-outline-success mx-2 text-nowrap"
+          style={{ marginRight: "10px" }}
+        >
+          Edit Project
+        </Link>
 
         <Link to="/projects" className="btn btn-primary">
           Back to Projects

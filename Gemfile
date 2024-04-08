@@ -66,3 +66,4 @@ end
 gem 'devise'
 gem "jsonapi-serializer"
 
+gem 'pundit'
