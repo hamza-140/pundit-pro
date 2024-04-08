@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const BugList = ({ bugs}) => {
+const BugList = ({ bugs }) => {
   return (
     <div>
       <h4>List of bugs:</h4>
@@ -16,7 +16,7 @@ const BugList = ({ bugs}) => {
           <tbody>
             {bugs.length === 0 ? (
               <tr>
-                <td colSpan="2" style={{ textAlign: 'center' }}>
+                <td colSpan="2" style={{ textAlign: "center" }}>
                   No bugs found. Add a new bug.
                 </td>
               </tr>

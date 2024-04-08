@@ -7,6 +7,7 @@ import ProjectList from "./ProjectList"; // Import the ProjectList component
 
 const Projects = () => {
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState('');
   const [projects, setProjects] = useState([]);
   const [createProjectAllowed, setCreateProjectAllowed] = useState(false);
   // const handleLogout = () => {
@@ -22,6 +23,20 @@ const Projects = () => {
   // };
   
   useEffect(() => {
+    fetch('/api/v1/current_user_role')
+      .then(response => response.text()) // Parse response as text
+      .then(role => {
+        setUserRole(role); 
+        // Set user role in component state
+        if (role === 'manager') {
+          setCreateProjectAllowed(true);
+        } else {
+          setCreateProjectAllowed(false);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching current user role:', error);
+      });
     const url = "/api/v1/projects/index";
     fetch(url)
       .then((res) => {
