@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const EditBug = () => {
   const navigate = useNavigate();
+  // const history = useHistory();
 
   const { project_id, bug_id } = useParams();
   const [bug, setBug] = useState({});
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
-  useEffect(() => {
-    console.log(project_id)
-    console.log(bug_id)
-    fetch(`/api/v1/project/${project_id.toString()}/bug/${bug_id.toString()}`)
+  
+  const fetchBug = (bugId) => {
+    if (!bugId) return;
+    fetch(`/api/v1/project/${project_id}/bug/${bugId}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -20,32 +22,29 @@ const EditBug = () => {
         throw new Error("Network response was not ok.");
       })
       .then((data) => {
-        console.log(data);
         setBug(data);
         setTitle(data.title);
         setDescription(data.description);
       })
-      .catch((error) => console.error("Error fetching project:", error));
+      .catch((error) => console.error("Error fetching bug:", error));
+  };
+
+  useEffect(() => {
+    fetchBug(bug_id);
   }, [bug_id]);
 
   const onSubmit = (event) => {
     event.preventDefault();
-    const bugID = bug_id;
-    const url = `/api/v1/bug/update/${bugID}`; // Use the appropriate endpoint for updating
-
-    if (title.length === 0) {
-      return;
-    }
+    const url = `/api/v1/project/${project_id}/bug/update/${bug_id}`;
 
     const body = {
       title,
-      description, // Add the description if needed
-      // Add other fields as needed for the update
+      description,
     };
 
     const token = document.querySelector('meta[name="csrf-token"]').content;
     fetch(url, {
-      method: "PUT", // Use PUT method for updates
+      method: "PUT",
       headers: {
         "X-CSRF-Token": token,
         "Content-Type": "application/json",
@@ -59,13 +58,15 @@ const EditBug = () => {
         throw new Error("Network response was not ok.");
       })
       .then((response) => navigate(`/project/${project_id}/bug/${response.id}`))
-      .catch((error) => console.log(error.message));
+      .catch((error) => console.error("Error updating bug:", error));
   };
+
+ 
 
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-center align-items-center">
-        <h1>Project Edit</h1>
+        <h1>Bug Edit</h1>
       </div>
       <form onSubmit={onSubmit}>
         <div className="mb-3">
@@ -75,7 +76,6 @@ const EditBug = () => {
           <input
             className="form-control"
             id="name"
-            aria-describedby="name"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -84,10 +84,9 @@ const EditBug = () => {
           <label htmlFor="description" className="form-label">
             Bug Description:
           </label>
-          <input
+          <textarea
             className="form-control"
             id="description"
-            aria-describedby="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
@@ -99,10 +98,7 @@ const EditBug = () => {
         >
           Update
         </button>
-        <Link
-          to="javascript:history.back()"
-          className="btn btn-outline-primary"
-        >
+        <Link className="btn btn-outline-primary" href="javascript:history.go(-1)">
           Return
         </Link>
       </form>

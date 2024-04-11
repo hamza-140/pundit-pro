@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const ProjectList = ({ projects, editProjectPath }) => {
   const navigate = useNavigate();
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    fetch("/api/v1/current_user_info")
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        throw new Error("Network response was not ok.");
+      })
+      .then((res) => {
+        setUser(res);
+      })
+      .catch(() => navigate("/"));
+  }, [navigate]);
 
   const deleteProject = (id) => {
     const url = `/api/v1/destroy/${id}`;
@@ -66,28 +81,37 @@ const ProjectList = ({ projects, editProjectPath }) => {
                         style={{ color: "green", fontSize: "20px" }}
                       ></i>
                     </Link>
-                    <Link
-                      to={editProjectPath(project.id)}
-                      style={{ marginRight: "10px" }}
-                    >
-                      <i
-                        className="bi bi-pencil-square"
-                        style={{ color: "orange", fontSize: "20px" ,marginLeft:"50px",marginRight:"50px"}}
-                      ></i>
-                    </Link>
-                    <button
-                      style={{
-                        border: "none",
-                        backgroundColor: "transparent",
-                        marginRight: "10px",
-                      }}
-                      onClick={() => handleDelete(project.id)}
-                    >
-                      <i
-                        className="bi bi-trash"
-                        style={{ color: "red", fontSize: "20px" }}
-                      ></i>
-                    </button>
+                    {user.role == "manager" && (
+                      <Link
+                        to={editProjectPath(project.id)}
+                        style={{ marginRight: "10px" }}
+                      >
+                        <i
+                          className="bi bi-pencil-square"
+                          style={{
+                            color: "orange",
+                            fontSize: "20px",
+                            marginLeft: "50px",
+                            marginRight: "50px",
+                          }}
+                        ></i>
+                      </Link>
+                    )}
+                    {user.role == "manager" && (
+                      <button
+                        style={{
+                          border: "none",
+                          backgroundColor: "transparent",
+                          marginRight: "10px",
+                        }}
+                        onClick={() => handleDelete(project.id)}
+                      >
+                        <i
+                          className="bi bi-trash"
+                          style={{ color: "red", fontSize: "20px" }}
+                        ></i>
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

@@ -57,6 +57,8 @@ class Api::V1::BugsController < ApplicationController
   #   end
   # end
   def update
+    Rails.logger.debug "Received parameters: #{params.inspect}"
+
     if @bug.update(bug_params)
       render json: @bug, status: :ok
     else
