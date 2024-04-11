@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import axios from 'axios'; // Import axios for making HTTP requests
 
 import ProjectList from "./ProjectList"; // Import the ProjectList component
 
 const Projects = () => {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [projects, setProjects] = useState([]);
   const [createProjectAllowed, setCreateProjectAllowed] = useState(false);
   // const handleLogout = () => {
@@ -23,7 +23,15 @@ const Projects = () => {
   // };
   
   useEffect(() => {
-    fetch('/api/v1/current_user_role')
+    fetch('/api/v1/current_user_email')
+      .then(response => response.text()) // Parse response as text
+      .then(role => {
+        setUserEmail(role); 
+      })
+      .catch(error => {
+        console.error('Error fetching current user role:', error);
+      });
+      fetch('/api/v1/current_user_role')
       .then(response => response.text()) // Parse response as text
       .then(role => {
         setUserRole(role); 
@@ -64,7 +72,6 @@ const Projects = () => {
         <Navbar 
           createProjectAllowed={createProjectAllowed}
           newProjectPath="/project/new"
-          projectsUsersPath="/projects_users"
         />
         <ProjectList 
           projects={projects}
@@ -74,6 +81,9 @@ const Projects = () => {
       {/* <button onClick={handleLogout}>
       Log out
     </button> */}
+    <div style={{fontWeight:'bold'}}>
+      <span style={{color:'green'}}>Logged in as: </span>{userEmail} as <span style={{color:'GrayText'}}>{userRole}</span>
+    </div>
     </div>
     
   );

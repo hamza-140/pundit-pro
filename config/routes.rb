@@ -20,15 +20,18 @@ Rails.application.routes.draw do
 
       # get '/show/:id', to: 'recipes#show'
       get "/show/:id", to: "projects#show"
-      get "project/:id/bug/:id", to: "bugs#show"
+      get "project/:project_id/bug/:id", to: "bugs#show"
       get "/current_user_role", to: "projects#current_user_role"
+      get "/current_user_email", to: "projects#current_user_email"
+      get "/current_user_info", to: "projects#current_user_info"
+      get "/developers", to: "projects#developers"
 
       delete "/destroy/:id", to: "projects#destroy"
       # delete '/des', to: 'controller#method'
       put "/update/:id", to: "projects#update"
       patch "/update/:id", to: "projects#update"
-      put "bug/update/:id", to: "bugs#update"
-      patch "bug/update/:id", to: "bugs#update"
+      put "/project/:project_id/bug/update/:id", to: "bugs#update"
+      patch "bug/update/:bug_id", to: "bugs#update"
     end
   end
   root "homepage#index"

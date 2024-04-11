@@ -3,7 +3,6 @@ import React from "react";
 const Navbar = ({
   createProjectAllowed,
   newProjectPath,
-  projectsUsersPath,
 }) => {
   // const handleLogout = () => {
   //   axios.delete('/users/sign_out') // Send a DELETE request to the logout path

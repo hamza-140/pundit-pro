@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_08_033909) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_08_155545) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -35,6 +35,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_08_033909) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "created_by"
+  end
+
+  create_table "projects_users", id: false, force: :cascade do |t|
+    t.bigint "project_id"
+    t.bigint "user_id"
+    t.index ["project_id"], name: "index_projects_users_on_project_id"
+    t.index ["user_id"], name: "index_projects_users_on_user_id"
   end
 
   create_table "recipes", force: :cascade do |t|
@@ -61,4 +69,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_08_033909) do
 
   add_foreign_key "bugs", "projects"
   add_foreign_key "bugs", "users"
+  add_foreign_key "projects", "users", column: "created_by"
+  add_foreign_key "projects_users", "projects"
+  add_foreign_key "projects_users", "users"
 end
