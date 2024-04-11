@@ -1,4 +1,5 @@
 class Api::V1::BugsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_project
   before_action :set_bug, only: [:show, :update, :destroy]
 
@@ -12,6 +13,7 @@ class Api::V1::BugsController < ApplicationController
     @bug = @project.bugs.new(bug_params)
     @bug.created_by = current_user.id
     @bug.project_id = @project.id
+    authorize @bug
     if @bug.save
       render json: @bug, status: :created
     else

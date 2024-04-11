@@ -1,16 +1,15 @@
-import React, { useState,useEffect } from "react";
-import { Link, useNavigate,useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const NewBug = () => {
-    const params = useParams()
+  const params = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
-  // const [ingredients, setIngredients] = useState("");
-  // const [instruction, setInstruction] = useState("");
+  const [error, setError] = useState(null); // State for error message
   const [project, setProject] = useState({});
+
   useEffect(() => {
     const fetchProject = async () => {
-        console.log(params.project_id)
       try {
         const response = await fetch(`/api/v1/show/${params.project_id}`);
         if (!response.ok) {
@@ -18,7 +17,6 @@ const NewBug = () => {
         }
         const data = await response.json();
         setProject(data.project);
-        // setBugs(data.bugs);
       } catch (error) {
         console.error("Error fetching project:", error);
       }
@@ -26,6 +24,7 @@ const NewBug = () => {
 
     fetchProject();
   }, [params.id]);
+
   const stripHtmlEntities = (str) => {
     return String(str)
       .replace(/\n/g, "<br> <br>")
@@ -40,14 +39,16 @@ const NewBug = () => {
   const onSubmit = (event) => {
     event.preventDefault();
     const url = `/api/v1/project/${project.id}/bug/create`;
-
-    if (title.length == 0)
+  
+    if (title.length === 0) {
+      setError("Bug title cannot be empty");
       return;
-
+    }
+  
     const body = {
-      title
+      title,
     };
-
+  
     const token = document.querySelector('meta[name="csrf-token"]').content;
     fetch(url, {
       method: "POST",
@@ -60,23 +61,33 @@ const NewBug = () => {
       .then((response) => {
         if (response.ok) {
           return response.json();
+        } else if (response.status === 401) {
+          throw new Error("Unauthorized: You are not authorized to perform this action.");
+        } else {
+          throw new Error("Network response was not ok.");
         }
-        throw new Error("Network response was not ok.");
       })
       .then((response) => navigate(`/project/${project.id}`))
-      .catch((error) => console.log(error.message));
+      .catch((error) => setError(error.message)); // Set error message in case of error
   };
+  
 
   return (
     <div className="container mt-5">
       <div className="row">
         <div className="col-sm-12 col-lg-6 offset-lg-3">
           <h1 className="font-weight-normal mb-5">
-            Add a new bug to  {project.name}
+            Add a new bug to {project.name}
           </h1>
+          {/* Render alert if there is an error */}
+          {error && (
+            <div className="alert alert-danger" role="alert">
+              {error}
+            </div>
+          )}
           <form onSubmit={onSubmit}>
             <div className="form-group">
-              <label htmlFor="projectName">Bug Title</label>
+              <label htmlFor="bugTitle">Bug Title</label>
               <input
                 type="text"
                 name="title"
@@ -86,33 +97,10 @@ const NewBug = () => {
                 onChange={(event) => onChange(event, setTitle)}
               />
             </div>
-            {/* <div className="form-group">
-              <label htmlFor="recipeIngredients">Ingredients</label>
-              <input
-                type="text"
-                name="ingredients"
-                id="recipeIngredients"
-                className="form-control"
-                required
-                onChange={(event) => onChange(event, setIngredients)}
-              />
-              <small id="ingredientsHelp" className="form-text text-muted">
-                Separate each ingredient with a comma.
-              </small>
-            </div>
-            <label htmlFor="instruction">Preparation Instructions</label>
-            <textarea
-              className="form-control"
-              id="instruction"
-              name="instruction"
-              rows="5"
-              required
-              onChange={(event) => onChange(event, setInstruction)}
-            /> */}
             <button type="submit" className="btn custom-button mt-3">
               Create Bug
             </button>
-            <Link to="javascript:history.back()" className="btn btn-link mt-3">
+            <Link to={`/project/${project.id}`} className="btn btn-link mt-3">
               Back to Project
             </Link>
           </form>

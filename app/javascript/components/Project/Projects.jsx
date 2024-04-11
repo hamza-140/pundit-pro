@@ -36,6 +36,7 @@ const Projects = () => {
       .then(role => {
         setUserRole(role); 
         // Set user role in component state
+        // console.log(role)
         if (role === 'manager') {
           setCreateProjectAllowed(true);
         } else {
@@ -55,7 +56,6 @@ const Projects = () => {
       })
       .then((res) => {
         setProjects(res);
-        setCreateProjectAllowed(true);
       })
       .catch(() => navigate("/"));
   }, [navigate]);
