@@ -3,12 +3,16 @@ import { Link, useParams } from "react-router-dom";
 
 const Project = () => {
   const params = useParams();
+  const [userRole, setUserRole] = useState("");
   const [project, setProject] = useState({});
   const [bugs, setBugs] = useState([]);
+  const [user, setUser] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
   const [userNames, setUserNames] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
-
+  const [bugCreate, setBugCreate] = useState(false);
+  const [editProject, setEditProject] = useState(false);
+  const [created_by, setCreated_by] = useState("");
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -18,6 +22,7 @@ const Project = () => {
         }
         const data = await response.json();
         setProject(data.project);
+        setCreated_by(data.project.created_by);
         setBugs(data.bugs);
         setUserNames(data.users.map((user) => user.email).join(", "));
       } catch (error) {
@@ -25,9 +30,40 @@ const Project = () => {
         setErrorMessage("Error fetching project details.");
       }
     };
-    fetchProject()
+    fetchProject();
+    fetch("/api/v1/current_user_role")
+      .then((response) => response.text()) // Parse response as text
+      .then((role) => {
+        setUserRole(role);
 
-   
+        // Set user role in component state
+        // console.log(role)
+        if (role === "manager" || role === "quality_assurance") {
+          setBugCreate(true);
+        } else {
+          setBugCreate(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching current user role:", error);
+      });
+    fetch("/api/v1/current_user_info")
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        throw new Error("Network response was not ok.");
+      })
+      .then((res) => {
+        setUser(res);
+        console.log(res.id);
+        console.log(project);
+        if (res.role === "manager" && res.id === created_by) {
+          setEditProject(true);
+        } else {
+          setEditProject(false);
+        }
+      });
   }, [params.id]);
 
   return (
@@ -77,7 +113,7 @@ const Project = () => {
             value={userNames}
           />
         </div>
-        
+
         <h4>List of Bugs:</h4>
         <div id="searchResults">
           <table className="table">
@@ -106,20 +142,24 @@ const Project = () => {
             </tbody>
           </table>
         </div>
-        <Link
-          to={`/project/${params.id}/bug/new`}
-          className="btn btn-outline-warning mx-2 text-nowrap"
-          style={{ marginRight: "10px" }}
-        >
-          New Bug
-        </Link>
-        <Link
-          to={`/project/${project.id}/edit`}
-          className="btn btn-outline-success mx-2 text-nowrap"
-          style={{ marginRight: "10px" }}
-        >
-          Edit Project
-        </Link>
+        {(user.role === "manager" || user.role === "quality_assurance") && (
+          <Link
+            to={`/project/${params.id}/bug/new`}
+            className="btn btn-outline-warning mx-2 text-nowrap"
+            style={{ marginRight: "10px" }}
+          >
+            New Bug
+          </Link>
+        )}
+        {created_by === user.id && (
+          <Link
+            to={`/project/${project.id}/edit`}
+            className="btn btn-outline-success mx-2 text-nowrap"
+            style={{ marginRight: "10px" }}
+          >
+            Edit Project
+          </Link>
+        )}
         <Link to="/projects" className="btn btn-primary">
           Back to Projects
         </Link>
