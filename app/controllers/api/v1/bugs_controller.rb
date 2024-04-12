@@ -14,6 +14,7 @@ class Api::V1::BugsController < ApplicationController
     @bug.created_by = current_user.id
     @bug.project_id = @project.id
     authorize @bug
+    Rails.logger.debug "Received parameters: #{params.inspect}"
     if @bug.save
       render json: @bug, status: :created
     else
@@ -69,8 +70,8 @@ class Api::V1::BugsController < ApplicationController
   end
   # DELETE /api/v1/projects/:project_id/bugs/:id
   def destroy
-    @bug.destroy
-    head :no_content
+    @bug&.destroy
+    render json: { message: 'Project deleted!' }
   end
 
   private
