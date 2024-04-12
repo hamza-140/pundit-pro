@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       get "/show/:id", to: "projects#show"
       get "project/:project_id/bug/:id", to: "bugs#show"
       get "/current_user_role", to: "projects#current_user_role"
+      get "/users/:id", to: "projects#users"
       get "/current_user_email", to: "projects#current_user_email"
       get "/current_user_info", to: "projects#current_user_info"
       get "/developers", to: "projects#developers"

@@ -168,8 +168,11 @@
 // export default NewProject;
 
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate,useParams } from "react-router-dom";
 
 const NewProject = () => {
+  const navigate = useNavigate();
+  const params = useParams();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -274,7 +277,6 @@ const NewProject = () => {
             multiple
             value={formData.user_ids}
             onChange={handleUserSelectChange}
-            required
           >
             {users.map((user) => (
               <option key={user.id} value={user.id}>
