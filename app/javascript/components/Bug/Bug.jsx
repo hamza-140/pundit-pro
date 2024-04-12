@@ -8,23 +8,19 @@ const Bug = () => {
   const [project, setProject] = useState({});
   const [bug, setBug] = useState([]);
   useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const response = await fetch(
-          `/api/v1/project/${params.project_id}/bug/${params.bug_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok.");
+    fetch(`/api/v1/project/${params.project_id}/bug/${params.bug_id}`)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
         }
-        const data = await response.json();
-        setBug(data);
-      } catch (error) {
-        console.error("Error fetching project:", error);
-      }
-    };
-
-    fetchProject();
-  }, [params.project_id, params.bug_id]); // Adjusted dependency array
+        throw new Error("Network response was not ok.");
+      })
+      .then((res) => {
+        setBug(res);
+      })
+      .catch(() => navigate(`/project/${params.project_id}`));
+  }, [navigate]);
+// Adjusted dependency array
 
   const deleteBug = (id) => {
     const url = `/api/v1/project/${params.project_id}/bug/destroy/${id}`;
@@ -37,12 +33,6 @@ const Bug = () => {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
       .then(() => navigate(`/project/${params.project_id}`)) // Redirect to project page
       .catch((error) => console.log(error.message));
   };
