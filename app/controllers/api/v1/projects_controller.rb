@@ -1,11 +1,11 @@
 class Api::V1::ProjectsController < ApplicationController
-  # before_action :authenticate_user!
+  before_action :authenticate_user!
   before_action :set_project, only: [:show, :update, :destroy, :edit]
   # before_action :authorize_project, except: [:index, :create,:current_user_role]
 
   def index
     projects = policy_scope(Project)
-    # authorize projects
+    authorize projects
     # projects = Project.all
     render json: projects
   end
@@ -75,6 +75,8 @@ class Api::V1::ProjectsController < ApplicationController
   end
 
   def show
+    authorize @project
+
     bugs = @project.bugs.all
     users = @project.users
     render json: {users:users, project: @project, bugs: bugs }
