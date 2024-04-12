@@ -5,13 +5,16 @@ import { Link } from "react-router-dom";
 
 const EditBug = () => {
   const navigate = useNavigate();
-  // const history = useHistory();
+  const params = useParams();
 
   const { project_id, bug_id } = useParams();
   const [bug, setBug] = useState({});
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   
+  const handleClick = () => {
+    history.goBack(); // Navigate back in history
+  };
   const fetchBug = (bugId) => {
     if (!bugId) return;
     fetch(`/api/v1/project/${project_id}/bug/${bugId}`)
@@ -31,6 +34,7 @@ const EditBug = () => {
 
   useEffect(() => {
     fetchBug(bug_id);
+    console.log(params)
   }, [bug_id]);
 
   const onSubmit = (event) => {
@@ -98,7 +102,7 @@ const EditBug = () => {
         >
           Update
         </button>
-        <Link className="btn btn-outline-primary" href="javascript:history.go(-1)">
+        <Link to={`/project/${params.project_id}/bug/${params.bug_id}`} className="btn btn-primary">
           Return
         </Link>
       </form>
