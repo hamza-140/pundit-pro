@@ -1,30 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Bug = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const [project, setProject] = useState({});
   const [bug, setBug] = useState([]);
-
   useEffect(() => {
-    console.log(params);
-    const fetchProject = async () => {
-      try {
-        // /api/v1/projects/:project_id/bug/:id
-        const response = await fetch(`/api/v1/project/${params.project_id}/bug/${params.bug_id}`);
-        if (!response.ok) {
-          throw new Error("Network response was not ok.");
+    fetch(`/api/v1/project/${params.project_id}/bug/${params.bug_id}`)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
         }
-        const data = await response.json();
-        // setProject(data.project);
-        setBug(data);
-      } catch (error) {
-        console.error("Error fetching project:", error);
-      }
-    };
+        throw new Error("Network response was not ok.");
+      })
+      .then((res) => {
+        setBug(res);
+      })
+      .catch(() => navigate(`/project/${params.project_id}`));
+  }, [navigate]);
+// Adjusted dependency array
 
-    fetchProject();
-  }, [params.id]);
+  const deleteBug = (id) => {
+    const url = `/api/v1/project/${params.project_id}/bug/destroy/${id}`;
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+
+    fetch(url, {
+      method: "DELETE",
+      headers: {
+        "X-CSRF-Token": token,
+        "Content-Type": "application/json",
+      },
+    })
+      .then(() => navigate(`/project/${params.project_id}`)) // Redirect to project page
+      .catch((error) => console.log(error.message));
+  };
 
   return (
     <div className="container py-5">
@@ -59,11 +70,17 @@ const Bug = () => {
         <Link
           to={`/project/${bug.project_id}/bug/${bug.id}/edit`}
           className="btn btn-outline-success text-nowrap"
-          style={{ marginRight: "10px" }}
         >
           Edit Bug
         </Link>
-        <Link to={`/project/${bug.project_id}`} className="btn btn-primary">
+        <button
+          className="btn btn-outline-danger mx-3"
+          onClick={() => deleteBug(bug.id)} // Pass deleteBug as a callback function
+        >
+          Delete
+        </button>
+
+        <Link to={`/project/${params.project_id}`} className="btn btn-primary">
           Return
         </Link>
       </form>

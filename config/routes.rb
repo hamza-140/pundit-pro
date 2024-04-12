@@ -27,6 +27,7 @@ Rails.application.routes.draw do
       get "/developers", to: "projects#developers"
 
       delete "/destroy/:id", to: "projects#destroy"
+      delete "/project/:project_id/bug/destroy/:id", to: "bugs#destroy"
       # delete '/des', to: 'controller#method'
       put "/update/:id", to: "projects#update"
       patch "/update/:id", to: "projects#update"
