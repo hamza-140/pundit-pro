@@ -1,6 +1,6 @@
 class Api::V1::ProjectsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_project, only: [:show, :update, :destroy, :edit]
+  before_action :set_project, only: [:show, :update, :destroy, :edit,:users]
   # before_action :authorize_project, except: [:index, :create,:current_user_role]
 
   def index
@@ -8,6 +8,9 @@ class Api::V1::ProjectsController < ApplicationController
     authorize projects
     # projects = Project.all
     render json: projects
+  end
+  def users
+    render json: @project.users
   end
   def current_user_email
     render plain: current_user.email
@@ -62,12 +65,25 @@ class Api::V1::ProjectsController < ApplicationController
 
   def update
     authorize @project
-    if @project.update(project_params)
-      render json: @project, status: :ok
+    Rails.logger.debug "Received parameters: #{params.inspect}"
+
+    user_ids = project_params[:user_ids] # Access user_ids from project_params
+
+    if user_ids.nil?
+      puts "No user_ids parameter provided"
     else
-      render json: @project.errors, status: :unprocessable_entity
+      # Save the project with updated attributes
+      if @project.update(project_params)
+        # Sync the associated users with the project based on the provided user_ids
+        @project.user_ids = user_ids
+
+        render json: @project, status: :ok
+      else
+        render json: @project.errors, status: :unprocessable_entity
+      end
     end
   end
+
 
   def destroy
     @project&.destroy
