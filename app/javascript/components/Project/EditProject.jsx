@@ -8,15 +8,12 @@ const EditProject = () => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    user_id:[]
+    user_id: []
   });
-  const [name,setName] = useState("")
-  const [description,setDescription] = useState("")
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   const [checkedUserIds, setCheckedUserIds] = useState([]);
-
-  const [project, setProject] = useState({});
-  const [users, setUsers] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
@@ -28,50 +25,34 @@ const EditProject = () => {
           throw new Error("Network response was not ok.");
         }
         const data = await response.json();
-        setProject(data.project);
-        console.log(data.users);
-
         setName(data.project.name);
         setDescription(data.project.description);
-
-        // setUsers(data.users); // Set the users fetched from the API
       } catch (error) {
         console.error("Error fetching project:", error);
       }
     };
     fetchProject();
-    const fetchUsers = async () => {
-      fetch(`/api/v1/users/${id}`)
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error("Network response was not ok.");
-        })
-        .then((data) => {
-          console.log(data);
-          setCheckedUserIds(data.map(user => user.id));
-          setUsers(data); // Update state with fetched developers
-        })
-        .catch((error) => console.error("Error fetching developers:", error));
-    };
 
-    fetchUsers();
+    // Fetch both developers and QA users
     const fetchAllUsers = async () => {
-      fetch(`/api/v1/developers`)
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
+      try {
+        const developersResponse = await fetch(`/api/v1/developers`);
+        const qaResponse = await fetch(`/api/v1/quality_assurance`);
+        
+        if (!developersResponse.ok || !qaResponse.ok) {
           throw new Error("Network response was not ok.");
-        })
-        .then((data) => {
-          console.log(data);
-          setAllUsers(data); // Update state with fetched developers
-        })
-        .catch((error) => console.error("Error fetching developers:", error));
+        }
+        
+        const developersData = await developersResponse.json();
+        const qaData = await qaResponse.json();
+        
+        // Combine developers and QA users into a single array
+        const combinedUsers = [...developersData, ...qaData];
+        setAllUsers(combinedUsers);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
     };
-
     fetchAllUsers();
   }, [id]);
 

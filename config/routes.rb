@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       get "/current_user_email", to: "projects#current_user_email"
       get "/current_user_info", to: "projects#current_user_info"
       get "/developers", to: "projects#developers"
+      get "/quality_assurance", to: "projects#quality_assurance"
 
       delete "/destroy/:id", to: "projects#destroy"
       delete "/project/:project_id/bug/destroy/:id", to: "bugs#destroy"

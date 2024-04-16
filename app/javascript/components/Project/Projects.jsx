@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import ProjectList from "./ProjectList"; // Import the ProjectList component
 
 const Projects = () => {
+  
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState('');
   const [userEmail, setUserEmail] = useState('');

@@ -15,11 +15,17 @@ class Api::V1::BugsController < ApplicationController
     @bug.project_id = @project.id
     authorize @bug
     Rails.logger.debug "Received parameters: #{params.inspect}"
+    user_id = bug_params[:user_id] # Access user_ids from project_params
+
+    if user_id.nil?
+      puts "No user_ids parameter provided"
+    else
     if @bug.save
       render json: @bug, status: :created
     else
       render json: @bug.errors, status: :unprocessable_entity
     end
+  end
   end
 
   # POST /api/v1/projects/:project_id/bugs

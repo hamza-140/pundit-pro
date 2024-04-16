@@ -9,11 +9,24 @@ const NewBug = () => {
   const [deadline, setDeadline] = useState("");
   const [bug_type, setBugType] = useState("");
   const [status, setStatus] = useState("");
-  const [userId, setUserId] = useState("");
+  const [user_id, setuser_id] = useState("");
   const [error, setError] = useState(null); // State for error message
   const [project, setProject] = useState({});
-
+const [users,setUsers] = useState([])
   useEffect(() => {
+    fetch(`/api/v1/users/${params.project_id}`)
+    .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Network response was not ok.");
+        })
+        .then((data) => {
+          console.log(data);
+          setUsers(data); // Update state with fetched developers
+        })
+        .catch((error) => console.error("Error fetching developers:", error));
+
     const fetchProject = async () => {
       try {
         const response = await fetch(`/api/v1/show/${params.project_id}`);
@@ -34,6 +47,12 @@ const NewBug = () => {
     const { name, value } = event.target;
     setValue(value); // Update the state with the new value
   };
+  const onChangeSelect = (event) => {
+    const selectedIds = Array.from(event.target.selectedOptions, (option) => option.value);
+    console.log(selectedIds.toString())
+    setuser_id(selectedIds.toString());
+  };
+  
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -50,7 +69,7 @@ const NewBug = () => {
       deadline,
       bug_type,
       status,
-      userId,
+      user_id,
     };
 
     const token = document.querySelector('meta[name="csrf-token"]').content;
@@ -118,8 +137,8 @@ const NewBug = () => {
                 name="deadline"
                 id="deadline"
                 className="form-control"
-                onChange={(event) => onChange(event, setDeadline)}
-              />
+                onChange={(e) => setDeadline(e.target.value)}
+                />
             </div>
             <div className="form-group">
               <label htmlFor="bug_type">Bug Type</label>
@@ -150,16 +169,25 @@ const NewBug = () => {
               </select>
             </div>
             <div className="form-group">
-              <label htmlFor="userId">Assign to</label>
-              <select
-                name="userId"
-                id="userId"
-                className="form-control"
-                onChange={(event) => onChange(event, setUserId)}
-              >
-                <option value="">Select Developer</option>
-                {/* You can map over user data to populate the options */}
-              </select>
+              <label htmlFor="user_id">Assign to</label>
+              <div>
+          <label htmlFor="user_ids">Select Users:</label>
+          <select
+          
+            id="user_id"
+            name="bug[user_id]"
+            value={user_id}
+            onChange={onChangeSelect}
+            >
+                <option selected>Choose Developer</option>
+
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.email}
+              </option>
+            ))}
+          </select>
+        </div>
             </div>
             <button type="submit" className="btn custom-button mt-3">
               Create Bug

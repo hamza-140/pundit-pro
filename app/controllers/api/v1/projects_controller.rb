@@ -9,8 +9,12 @@ class Api::V1::ProjectsController < ApplicationController
     # projects = Project.all
     render json: projects
   end
+
+
+
+
   def users
-    render json: @project.users
+    render json: @project.users.where(role:'developer')
   end
   def current_user_email
     render plain: current_user.email
@@ -92,11 +96,15 @@ class Api::V1::ProjectsController < ApplicationController
 
   def show
     authorize @project
-
-    bugs = @project.bugs.all
+    if current_user.role == "manager" || current_user.role=="quality_assurance"
+      bugs = @project.bugs.where(created_by: current_user.id)
+    else
+      bugs = @project.bugs.all
+    end
     users = @project.users
-    render json: {users:users, project: @project, bugs: bugs }
+    render json: { users: users, project: @project, bugs: bugs }
   end
+
 
   def edit
     authorize @project
