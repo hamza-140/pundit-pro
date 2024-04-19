@@ -43,7 +43,6 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    authorize @project
     # Store the current users before updating the project
     current_user_ids = @project.user_ids
 
