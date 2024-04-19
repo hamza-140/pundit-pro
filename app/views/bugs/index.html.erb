@@ -26,5 +26,5 @@
   </tbody>
 </table>
 
-<%= link_to 'New Bug', new_project_bug_path(@project) if policy(Bug).create? %>
+<%= link_to 'New Bug', new_project_bug_path(@project) %>
 <%= link_to 'Back', project_path(@project) %>

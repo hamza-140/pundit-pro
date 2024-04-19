@@ -54,6 +54,7 @@ class BugsController < ApplicationController
     # redirect_to @bug, notice: 'Screenshot was successfully cleared.'
   end
   def show
+    authorize @bug
   end
 
   def new

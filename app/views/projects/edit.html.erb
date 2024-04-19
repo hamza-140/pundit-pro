@@ -1,7 +1,7 @@
 <div class="wrapper">
 <h1 class="text-center name">Edit Project</h1>
 
-<% if policy(Project).edit? %>
+
   <%= form_for(@project) do |f| %>
   <%= render "users/shared/error_messages", resource: @project %>
 
@@ -30,7 +30,5 @@
     </div>
     <%= link_to "Return", "javascript:history.back()", class: "btn mt-3" %>
     <% end %>
-<% else %>
-  <p>You are not authorized to edit this project.</p>
-<% end %>
+  
 </div>

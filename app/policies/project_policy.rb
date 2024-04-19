@@ -1,15 +1,22 @@
 # app/policies/project_policy.rb
 class ProjectPolicy < ApplicationPolicy
+  attr_reader :user, :project
+
+  def initialize(user, project)
+    @user = user
+    @project = project
+  end
+
   def index?
     user.present?
   end
 
   def show?
-    user.present? && (user.role == "manager" || record.users.include?(user))
+    user_is_allowed?
   end
 
   def edit?
-    user.present? && user.role == "manager"
+    user_is_creator?
   end
 
   def destroy?
@@ -25,7 +32,7 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def update?
-    user.present? && user.role == "manager" && (record.users.include?(user) || record.created_by = user.id)
+    user.present? && user.role == "manager" && (record.users.include?(user) || record.created_by == user.id)
   end
 
   def destroy?
@@ -44,5 +51,13 @@ class ProjectPolicy < ApplicationPolicy
         scope.none
       end
     end
+  end
+
+  def user_is_allowed?
+    project.created_by == user.id || project.users.include?(user)
+  end
+
+  def user_is_creator?
+    project.created_by == user.id
   end
 end

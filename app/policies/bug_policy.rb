@@ -5,30 +5,31 @@ class BugPolicy < ApplicationPolicy
   end
 
   def show?
-    user.present? && (user.role == "manager" ||user.role == "developer" || user.role == "quality_assurance" || record.exists?(user_id: user.id) || record.exists?(created_by: user.id))
+    user.present? && (
+      (user.role == "manager" && record.project.created_by == user.id) ||  # Managers can see all bugs in the project they created
+      (user.role == "developer" && record.project.users.include?(user)) ||  # Developers can see bugs if they are part of the project
+      (user.role == "quality_assurance" && record.project.users.include?(user))  # Quality assurance users can see bugs if they are part of the project
+    )
   end
 
   def create?
-    user.present? && (user.role == "quality_assurance"||user.role == "manager")
+    # puts "in create"
+    # puts record.project.created_by
+    user.present? && ((user.role == "quality_assurance" && record.exists?(user_id: user.id)) || (user.role == "manager" && record.project.created_by == user.id))
   end
 
   def update?
-    user.present? && (
-      user.role == "developer" ||
-      record.created_by == user.id
-    )
+    user.present? && (user.role == "developer" ||
+                      record.created_by == user.id)
   end
 
   def edit?
-    user.present? && (
-      user.role == "developer" ||
-      record.created_by == user.id
-    )
+    user.present? && (user.role == "developer" ||
+                      record.created_by == user.id)
   end
 
-
   def destroy?
-    user.present? && ( user.role == "quality_assurance")
+    user.present? && (user.role == "quality_assurance")
   end
 
   class Scope < Scope
